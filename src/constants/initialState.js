@@ -1,0 +1,14 @@
+export const INITIAL_STATE = {
+  mode: "simulation",
+  deviceOnline: false,
+  temperature: 25,
+  humidity: 60,
+  pressure: 101.3,
+  heatIndex: 26,
+  dewPoint: 18,
+  absHumidity: 14,
+  brightness: 1,
+  speed: 1,
+  openKey: null,
+  chartData: [{ time: "0:00", temp: 25, hum: 60, pres: 101.3 }],
+};
