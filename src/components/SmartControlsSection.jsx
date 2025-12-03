@@ -35,7 +35,7 @@ export default function SmartControlsSection({
   setSpeed,
   publish,
 }) {
-  const brightnessLevels = [255, 128, 50];
+  const brightnessLevels = [50, 128, 255];
   const speedLevels = [100, 50, 20];
 
   return (
