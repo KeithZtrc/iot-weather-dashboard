@@ -1,6 +1,8 @@
 import { motion } from "framer-motion";
+import { useState } from "react";
 import SectionHeader from "./SectionHeader.jsx";
 import ThreeLevelPillSlider from "./ThreeLevelPillSlider.jsx";
+import WeatherControlSection from "./WeatherControlSection.jsx";
 import { MQTT_TOPICS } from "../constants/mqttConfig.js";
 
 /* ================================
@@ -26,13 +28,16 @@ export function SmartControls({
 
 /* ================================
    Smart Controls Section
-   Controls for LED brightness + animation speed
+   Controls for LED brightness,
+   animation speed, and current weather
 ================================ */
 export default function SmartControlsSection({
   brightness,
   setBrightness,
   speed,
   setSpeed,
+  currentWeather,
+  setCurrentWeather,
   publish,
 }) {
   const brightnessLevels = [50, 128, 255];
@@ -45,30 +50,19 @@ export default function SmartControlsSection({
       viewport={{ once: true }}
       transition={{ duration: 0.6, ease: "easeOut" }}
       className="
-        max-w-7xl mx-auto rounded-2xl px-6 py-8
-        bg-white/40 backdrop-blur-xl shadow-md border border-white/20 mb-10
-        relative overflow-hidden
+        max-w-7xl mx-auto rounded-3xl p-8
+        bg-white/30 backdrop-blur-2xl
+        border border-white/30 shadow-lg overflow-hidden
       "
     >
-      {/* Soft floating glow (transform-only animation for performance) */}
-      <motion.div
-        animate={{ x: [0, 10, -10, 0], y: [0, -8, 6, 0] }}
-        transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
-        className="pointer-events-none absolute -top-10 -right-10 h-32 w-32 rounded-full bg-blue-300/20 blur-3xl"
-      />
-
-      {/* Section Header */}
       <SectionHeader
         title="Smart Controls"
         subtitle="Interact with connected systems and adjust environmental responses"
         icon={<span className="text-6xl cursor-pointer">🎛️</span>}
       />
 
-      {/* ============================
-          2-Column Control Grid
-      ============================ */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
-        {/* Brightness Control */}
+      {/* Sliders */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
         <ThreeLevelPillSlider
           label="Brightness"
           description="Controls overall luminosity of the LED matrix."
@@ -80,7 +74,6 @@ export default function SmartControlsSection({
           colors={{ active: "linear-gradient(135deg, #ffbb55, #ff8855)" }}
         />
 
-        {/* Animation Speed Control */}
         <ThreeLevelPillSlider
           label="Animation Speed"
           description="Adjusts the tempo at which LED animations play."
@@ -92,6 +85,13 @@ export default function SmartControlsSection({
           colors={{ active: "linear-gradient(135deg, #4f8ef7, #3ac0f8)" }}
         />
       </div>
+
+      {/* Weather Control */}
+      <WeatherControlSection
+        currentWeather={currentWeather}
+        onWeatherChange={setCurrentWeather}
+        publish={publish}
+      />
     </motion.div>
   );
 }

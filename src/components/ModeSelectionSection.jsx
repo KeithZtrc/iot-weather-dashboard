@@ -20,7 +20,7 @@ export default function ModeSelector({ mode, setMode, deviceOnline }) {
         <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-blue-300/20 blur-2xl rounded-full pointer-events-none" />
 
         {/* ============================
-            Section title + subtitle (shared UI component)
+            Section title and subtitle
            ============================ */}
         <SectionHeader
           title="Data Source Mode"

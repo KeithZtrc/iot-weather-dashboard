@@ -12,10 +12,13 @@ const WeatherLayer = React.memo(({ effect }) => {
   // Weather-based gradient presets
   const gradients = {
     sunny: "linear-gradient(135deg, #FFD93D, #FF6B35)",
+    // #fddb92, #d1fdff
     rain: "linear-gradient(135deg, #4A90E2, #1C3F5C)",
     snow: "linear-gradient(135deg, #E0F7FA, #80DEEA)",
     clouds: "linear-gradient(135deg, #B0BEC5, #546E7A)",
+    // #89f7fe, #66a6ff
     heat: "linear-gradient(135deg, #FF512F, #DD2476)",
+    storm: "linear-gradient(135deg, #536976, #292E49)",
   };
 
   return (

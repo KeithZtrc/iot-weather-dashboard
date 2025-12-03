@@ -15,6 +15,7 @@ import ModeSelectionSection from "./components/ModeSelectionSection.jsx";
 import SensorReadingsSection from "./components/SensorReadingsSection.jsx";
 import HistoryDataSection from "./components/HistoryDataSection.jsx";
 import InterpretationGuideSection from "./components/InterpretationGuideSection.jsx";
+import WeatherStatusGuideSection from "./components/WeatherStatusGuideSection.jsx";
 import SmartControlsSection from "./components/SmartControlsSection.jsx";
 
 /* ---------------------------------------------------------------------
@@ -32,7 +33,7 @@ import SmartControlsSection from "./components/SmartControlsSection.jsx";
 
 export default function WeatherDashboard() {
   /* -----------------------------------------------------------
-     CORE MODE + DEVICE STATUS
+     CORE MODE and DEVICE STATUS
   ----------------------------------------------------------- */
   const [mode, setMode] = useState(INITIAL_STATE.mode);
   const [deviceOnline, setDeviceOnline] = useState(INITIAL_STATE.deviceOnline);
@@ -42,7 +43,7 @@ export default function WeatherDashboard() {
   const { publish } = useMqttPublisher(mqttClient);
 
   /* -----------------------------------------------------------
-     SENSOR METRICS (Primary + Derived)
+     SENSOR METRICS (Primary and Derived)
   ----------------------------------------------------------- */
   const [temperature, setTemperature] = useState(INITIAL_STATE.temperature);
   const [humidity, setHumidity] = useState(INITIAL_STATE.humidity);
@@ -57,6 +58,7 @@ export default function WeatherDashboard() {
   ----------------------------------------------------------- */
   const [brightness, setBrightness] = useState(INITIAL_STATE.brightness);
   const [speed, setSpeed] = useState(INITIAL_STATE.speed);
+  const [currentWeather, setCurrentWeather] = useState(INITIAL_STATE.weather);
 
   const [openKey, setOpenKey] = useState(INITIAL_STATE.openKey);
 
@@ -96,7 +98,7 @@ export default function WeatherDashboard() {
   /* -----------------------------------------------------------
      DERIVED VISUAL DATA
   ----------------------------------------------------------- */
-  const weather = getWeatherStatus(temperature, humidity);
+  const weather = getWeatherStatus(temperature, humidity, pressure);
   const metricsPrimary = getMetricsPrimary(temperature, humidity, pressure);
   const metricsDerived = getMetricsDerived(heatIndex, dewPoint, absHumidity);
 
@@ -104,10 +106,7 @@ export default function WeatherDashboard() {
      RENDER
   ----------------------------------------------------------- */
   return (
-    <div
-      className="relative min-h-screen w-full overflow-hidden"
-      style={{ background: weather.bg }}
-    >
+    <div className="relative min-h-screen w-full overflow-hidden">
       {/* Dynamic gradient/atmospheric overlay */}
       <WeatherLayer effect={weather.effect} />
 
@@ -130,11 +129,15 @@ export default function WeatherDashboard() {
 
       <InterpretationGuideSection />
 
+      <WeatherStatusGuideSection />
+
       <SmartControlsSection
         brightness={brightness}
         setBrightness={setBrightness}
         speed={speed}
         setSpeed={setSpeed}
+        currentWeather={currentWeather}
+        setCurrentWeather={setCurrentWeather}
         publish={publish}
       />
     </div>

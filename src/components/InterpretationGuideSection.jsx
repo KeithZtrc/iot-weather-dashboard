@@ -8,7 +8,7 @@ export default function InterpretationGuideSection() {
     >
       {/* Header introducing the interpretation guide section */}
       <SectionHeader
-        title="Atmospheric Interpretation Guide"
+        title="Atmospheric Interpretation"
         subtitle="Quick understanding of what each reading means for comfort, safety, and environment"
         icon={<span className="text-6xl cursor-pointer">🧭</span>}
       />

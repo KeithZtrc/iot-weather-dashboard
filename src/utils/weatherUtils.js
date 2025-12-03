@@ -1,4 +1,10 @@
-import { sunnyAnim, rainyAnim, cloudyAnim, fogAnim } from "../lottie/index.js";
+import {
+  sunnyAnim,
+  rainyAnim,
+  cloudyAnim,
+  stormyAnim,
+  chillyAnim,
+} from "../lottie/index.js";
 
 /* -------------------------------------------------------
    Color scale (used for progress, status bars, etc.)
@@ -65,59 +71,64 @@ export function computeDerived(temp, hum, pres) {
 /* -------------------------------------------------------
    Weather status (Lottie, background, effects)
 ------------------------------------------------------- */
-export function getWeatherStatus(temp, hum) {
+export function getWeatherStatus(temp, hum, pres) {
   // Safety fallback
   if (!Number.isFinite(temp) || !Number.isFinite(hum)) {
     return {
       desc: "Loading",
-      bg: "linear-gradient(135deg, #ddd, #bbb)",
       lottie: cloudyAnim,
       effect: "clouds",
     };
   }
 
   // Priority ordering:
-  // 1) Rain conditions
-  // 2) Cold → possibly snowy
-  // 3) Heat
-  // 4) Cloudy
-  // 5) Sunny default
+  // 1) Storm conditions
+  // 2) Rain conditions
+  // 3) Chilly conditions
+  // 4) Heat conditions
+  // 5) Cloudy conditions
+  // 6) Sunny default
+
+  // ⛈ Stormy (low pressure and high humidity)
+  if (pres < 99.5 && hum > 80 && temp >= 15) {
+    return {
+      desc: "Stormy",
+      lottie: stormyAnim,
+      effect: "storm",
+    };
+  }
 
   // 🌧 Rainy (very high humidity)
-  if (hum >= 85) {
+  if (pres < 100.5 && hum > 85) {
     return {
       desc: "Rainy",
-      bg: "linear-gradient(135deg, #a0c4ff 0%, #3a7bd5 100%)",
       lottie: rainyAnim,
       effect: "rain",
     };
   }
 
-  // ❄ Cold / chilly
-  if (temp < 15) {
+  // ❄ Chilly
+  if (temp <= 5 || (temp <= 10 && hum < 60 && pres > 102)) {
     return {
-      desc: "Cold",
-      bg: "linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%)",
-      lottie: fogAnim,
+      desc: "Chilly",
+      lottie: chillyAnim,
       effect: "snow",
     };
   }
 
   // 🔥 Heat wave
-  if (temp >= 35) {
+  if (temp >= 32 && hum < 60) {
     return {
       desc: "Hot",
-      bg: "linear-gradient(135deg, #ffe29f 0%, #ff7e5f 100%)",
       lottie: sunnyAnim,
       effect: "heat",
     };
   }
 
   // ☁ Cloudy (moderate humidity)
-  if (hum >= 60) {
+  if (hum >= 60 && pres <= 101.5) {
     return {
       desc: "Cloudy",
-      bg: "linear-gradient(135deg, #d7d2cc 0%, #304352 100%)",
       lottie: cloudyAnim,
       effect: "clouds",
     };
@@ -126,7 +137,6 @@ export function getWeatherStatus(temp, hum) {
   // ☀ Default sunny
   return {
     desc: "Sunny",
-    bg: "linear-gradient(135deg, #fddb92 0%, #d1fdff 100%)",
     lottie: sunnyAnim,
     effect: "sunny",
   };

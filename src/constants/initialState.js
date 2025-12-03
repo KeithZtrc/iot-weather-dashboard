@@ -9,6 +9,7 @@ export const INITIAL_STATE = {
   absHumidity: 14,
   brightness: 1,
   speed: 1,
+  weather: "sunny",
   openKey: null,
   chartData: [{ time: "0:00", temp: 25, hum: 60, pres: 101.3 }],
 };

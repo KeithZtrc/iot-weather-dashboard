@@ -91,7 +91,7 @@ const MetricCard = React.memo(function MetricCard({
       </div>
 
       {/* =========================
-          LABEL + METRIC VALUE
+          LABEL and METRIC VALUE
          ========================= */}
       <div className="flex-1">
         <div className="text-sm text-gray-600 font-medium flex items-center justify-between">
@@ -125,7 +125,7 @@ const MetricCard = React.memo(function MetricCard({
       )}
 
       {/* =========================
-          ARC INDICATOR (progress ring)
+          ARC INDICATOR
           Visualization of value vs. min/max
          ========================= */}
       <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none opacity-40">
