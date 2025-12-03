@@ -105,7 +105,7 @@ export function getMetricsDerived(heatIndex, dewPoint, absHumidity) {
       value: dewPoint,
       unit: "°C",
       Icon: DewIcon,
-      min: -20,
+      min: 0,
       max: 28,
       description: metricInfo.dew,
     }),

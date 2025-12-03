@@ -63,7 +63,7 @@ export default function ModeSelector({ mode, setMode, deviceOnline }) {
                   Manual Simulation
                 </h3>
                 <p className="text-sm text-gray-700/80">
-                  User-controlled sliders for testing.
+                  User-controlled sliders for UI testing.
                 </p>
               </div>
             </div>

@@ -140,14 +140,18 @@ export default function ManualSimulationSection({
       </div>
 
       {/* Large Sliders */}
-      <div className="space-y-10 mb-10">
+      {/* Large Sliders - Maximized Layout */}
+      <div className="space-y-12 mb-12">
         {/* Temperature Slider */}
-        <div className="rounded-2xl p-8 bg-white/20 backdrop-blur-xl border border-white/30">
-          <div className="flex justify-between items-center mb-4">
-            <label className="text-lg font-bold text-gray-800">
-              Temperature
-            </label>
-            <span className="text-3xl font-bold text-gray-900">
+        <div className="rounded-2xl p-10 bg-white/20 backdrop-blur-xl border border-white/30">
+          <div className="flex justify-between items-end mb-6">
+            <div>
+              <label className="text-lg font-bold text-gray-800 block mb-2">
+                Temperature
+              </label>
+              <p className="text-sm text-gray-600">0°C to 50°C</p>
+            </div>
+            <span className="text-4xl font-bold text-gray-900">
               {temperature}°C
             </span>
           </div>
@@ -158,7 +162,7 @@ export default function ManualSimulationSection({
             step="0.1"
             value={temperature}
             onChange={(e) => setTemperature(parseFloat(e.target.value))}
-            className="w-full h-3 bg-gradient-to-r from-blue-300 to-red-400 rounded-lg appearance-none cursor-pointer"
+            className="w-full h-3 bg-gradient-to-r from-gray-300 to-gray-400 rounded-lg appearance-none cursor-pointer"
             style={{
               WebkitAppearance: "none",
               appearance: "none",
@@ -167,25 +171,35 @@ export default function ManualSimulationSection({
           <style>{`
             input[type='range']::-webkit-slider-thumb {
               appearance: none;
-              width: 24px;
-              height: 24px;
+              width: 28px;
+              height: 28px;
               border-radius: 50%;
               background: white;
               cursor: pointer;
-              box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+              box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
               border: 2px solid #1f2937;
+              transition: transform 0.2s;
+            }
+            input[type='range']::-webkit-slider-thumb:hover {
+              transform: scale(1.15);
+              box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
             }
             input[type='range']::-moz-range-thumb {
-              width: 24px;
-              height: 24px;
+              width: 28px;
+              height: 28px;
               border-radius: 50%;
               background: white;
               cursor: pointer;
-              box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+              box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
               border: 2px solid #1f2937;
+              transition: transform 0.2s;
+            }
+            input[type='range']::-moz-range-thumb:hover {
+              transform: scale(1.15);
+              box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
             }
           `}</style>
-          <div className="flex justify-between text-xs text-gray-600 mt-2 px-1">
+          <div className="flex justify-between text-sm text-gray-600 mt-3 px-2 font-medium">
             <span>0°C</span>
             <span>25°C</span>
             <span>50°C</span>
@@ -193,10 +207,15 @@ export default function ManualSimulationSection({
         </div>
 
         {/* Humidity Slider */}
-        <div className="rounded-2xl p-8 bg-white/20 backdrop-blur-xl border border-white/30">
-          <div className="flex justify-between items-center mb-4">
-            <label className="text-lg font-bold text-gray-800">Humidity</label>
-            <span className="text-3xl font-bold text-gray-900">
+        <div className="rounded-2xl p-10 bg-white/20 backdrop-blur-xl border border-white/30">
+          <div className="flex justify-between items-end mb-6">
+            <div>
+              <label className="text-lg font-bold text-gray-800 block mb-2">
+                Humidity
+              </label>
+              <p className="text-sm text-gray-600">0% to 100%</p>
+            </div>
+            <span className="text-4xl font-bold text-gray-900">
               {humidity}%
             </span>
           </div>
@@ -207,7 +226,7 @@ export default function ManualSimulationSection({
             step="1"
             value={humidity}
             onChange={(e) => setHumidity(parseInt(e.target.value))}
-            className="w-full h-3 bg-gradient-to-r from-orange-300 to-purple-400 rounded-lg appearance-none cursor-pointer"
+            className="w-full h-3 bg-gradient-to-r from-gray-300 to-gray-400 rounded-lg appearance-none cursor-pointer"
             style={{
               WebkitAppearance: "none",
               appearance: "none",
@@ -216,16 +235,35 @@ export default function ManualSimulationSection({
           <style>{`
             input[type='range']::-webkit-slider-thumb {
               appearance: none;
-              width: 24px;
-              height: 24px;
+              width: 28px;
+              height: 28px;
               border-radius: 50%;
               background: white;
               cursor: pointer;
-              box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+              box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
               border: 2px solid #1f2937;
+              transition: transform 0.2s;
+            }
+            input[type='range']::-webkit-slider-thumb:hover {
+              transform: scale(1.15);
+              box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            }
+            input[type='range']::-moz-range-thumb {
+              width: 28px;
+              height: 28px;
+              border-radius: 50%;
+              background: white;
+              cursor: pointer;
+              box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+              border: 2px solid #1f2937;
+              transition: transform 0.2s;
+            }
+            input[type='range']::-moz-range-thumb:hover {
+              transform: scale(1.15);
+              box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
             }
           `}</style>
-          <div className="flex justify-between text-xs text-gray-600 mt-2 px-1">
+          <div className="flex justify-between text-sm text-gray-600 mt-3 px-2 font-medium">
             <span>0%</span>
             <span>50%</span>
             <span>100%</span>
@@ -233,10 +271,15 @@ export default function ManualSimulationSection({
         </div>
 
         {/* Pressure Slider */}
-        <div className="rounded-2xl p-8 bg-white/20 backdrop-blur-xl border border-white/30">
-          <div className="flex justify-between items-center mb-4">
-            <label className="text-lg font-bold text-gray-800">Pressure</label>
-            <span className="text-3xl font-bold text-gray-900">{pressure}</span>
+        <div className="rounded-2xl p-10 bg-white/20 backdrop-blur-xl border border-white/30">
+          <div className="flex justify-between items-end mb-6">
+            <div>
+              <label className="text-lg font-bold text-gray-800 block mb-2">
+                Pressure
+              </label>
+              <p className="text-sm text-gray-600">95 kPa to 110 kPa</p>
+            </div>
+            <span className="text-4xl font-bold text-gray-900">{pressure}</span>
           </div>
           <input
             type="range"
@@ -245,13 +288,44 @@ export default function ManualSimulationSection({
             step="0.1"
             value={pressure}
             onChange={(e) => setPressure(parseFloat(e.target.value))}
-            className="w-full h-3 bg-gradient-to-r from-red-300 to-blue-400 rounded-lg appearance-none cursor-pointer"
+            className="w-full h-3 bg-gradient-to-r from-gray-300 to-gray-400 rounded-lg appearance-none cursor-pointer"
             style={{
               WebkitAppearance: "none",
               appearance: "none",
             }}
           />
-          <div className="flex justify-between text-xs text-gray-600 mt-2 px-1">
+          <style>{`
+            input[type='range']::-webkit-slider-thumb {
+              appearance: none;
+              width: 28px;
+              height: 28px;
+              border-radius: 50%;
+              background: white;
+              cursor: pointer;
+              box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+              border: 2px solid #1f2937;
+              transition: transform 0.2s;
+            }
+            input[type='range']::-webkit-slider-thumb:hover {
+              transform: scale(1.15);
+              box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            }
+            input[type='range']::-moz-range-thumb {
+              width: 28px;
+              height: 28px;
+              border-radius: 50%;
+              background: white;
+              cursor: pointer;
+              box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+              border: 2px solid #1f2937;
+              transition: transform 0.2s;
+            }
+            input[type='range']::-moz-range-thumb:hover {
+              transform: scale(1.15);
+              box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            }
+          `}</style>
+          <div className="flex justify-between text-sm text-gray-600 mt-3 px-2 font-medium">
             <span>95 kPa</span>
             <span>102.5 kPa</span>
             <span>110 kPa</span>
