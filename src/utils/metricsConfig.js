@@ -52,8 +52,8 @@ export function getMetricsPrimary(temperature, humidity, pressure) {
       value: temperature,
       unit: "°C",
       Icon: TempIcon,
-      min: 0,
-      max: 40,
+      min: 15,
+      max: 50,
       description: metricInfo.temp,
     }),
 
@@ -94,8 +94,8 @@ export function getMetricsDerived(heatIndex, dewPoint, absHumidity) {
       value: heatIndex,
       unit: "°C",
       Icon: HeatIcon,
-      min: 10,
-      max: 45,
+      min: 15,
+      max: 55,
       description: metricInfo.heat,
     }),
 
@@ -105,8 +105,8 @@ export function getMetricsDerived(heatIndex, dewPoint, absHumidity) {
       value: dewPoint,
       unit: "°C",
       Icon: DewIcon,
-      min: 0,
-      max: 25,
+      min: -20,
+      max: 28,
       description: metricInfo.dew,
     }),
 
@@ -118,7 +118,7 @@ export function getMetricsDerived(heatIndex, dewPoint, absHumidity) {
       unit: " g/m³",
       Icon: AbsHumIcon,
       min: 0,
-      max: 25,
+      max: 30,
       description: metricInfo.abs,
     }),
   ];

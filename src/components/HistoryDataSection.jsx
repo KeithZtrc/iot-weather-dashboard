@@ -54,10 +54,25 @@ export default function HistoryDataSection({ chartData }) {
                     <CartesianGrid strokeDasharray="3 3" stroke="#ccc" />
 
                     {/* X-axis uses the 'time' field from chartData */}
-                    <XAxis dataKey="time" stroke="#333" />
+                    <XAxis
+                      dataKey="time"
+                      stroke="#333"
+                      tickFormatter={(time) => {
+                        const date = new Date(`2025-12-03T${time}`);
+                        return date.toLocaleTimeString("en-US", {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                          hour12: true,
+                        });
+                      }}
+                    />
 
                     {/* Y-axis dynamically scaled depending on metric */}
-                    <YAxis stroke="#333" domain={yDomain} />
+                    <YAxis
+                      stroke="#333"
+                      domain={yDomain}
+                      tickFormatter={(value) => value.toFixed(2)}
+                    />
 
                     {/* Tooltip shows the hovered value */}
                     <Tooltip />

@@ -35,8 +35,8 @@ export default function WeatherControlSection({
       gradient: "linear-gradient(135deg, #6D7C8A, #A1AAB3)",
     },
     {
-      id: "heat",
-      text: "Heat",
+      id: "hot",
+      text: "Hot",
       gradient: "linear-gradient(135deg, #F12711, #F5AF19)",
     },
     {

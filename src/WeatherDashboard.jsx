@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import { useMqttPublisher } from "./hooks/useMqttPublisher.js";
 import { useSimulation } from "./hooks/useSimulation.js";
@@ -6,6 +6,7 @@ import { useMqttSensor } from "./hooks/useMqttSensor.js";
 
 import { getMetricsPrimary, getMetricsDerived } from "./utils/metricsConfig.js";
 import { getWeatherStatus } from "./utils/weatherUtils.js";
+import { computeDerived } from "./utils/weatherUtils.js";
 
 import { INITIAL_STATE } from "./constants/initialState.js";
 
@@ -17,6 +18,7 @@ import HistoryDataSection from "./components/HistoryDataSection.jsx";
 import InterpretationGuideSection from "./components/InterpretationGuideSection.jsx";
 import WeatherStatusGuideSection from "./components/WeatherStatusGuideSection.jsx";
 import SmartControlsSection from "./components/SmartControlsSection.jsx";
+import ManualSimulationSection from "./components/ManualSimulationSection.jsx";
 
 /* ---------------------------------------------------------------------
    WEATHER DASHBOARD ROOT
@@ -66,12 +68,42 @@ export default function WeatherDashboard() {
   const [chartData, setChartData] = useState(INITIAL_STATE.chartData);
 
   /* -----------------------------------------------------------
+     SYNC DERIVED METRICS & CHART DATA
+     Whenever primary metrics change, update derived values
+     and append to chart history
+  ----------------------------------------------------------- */
+  useEffect(() => {
+    const derived = computeDerived(temperature, humidity, pressure);
+    setHeatIndex(derived.heatIndex);
+    setDewPoint(derived.dewPoint);
+    setAbsHumidity(derived.absHumidity);
+
+    // Append to chart (keep last 20)
+    const now = new Date();
+    const timeStr = `${String(now.getHours()).padStart(2, "0")}:${String(
+      now.getMinutes()
+    ).padStart(2, "0")}`;
+
+    setChartData((prev) =>
+      [
+        ...prev,
+        {
+          time: timeStr,
+          temp: temperature,
+          hum: humidity,
+          pres: pressure,
+        },
+      ].slice(-20)
+    );
+  }, [temperature, humidity, pressure]);
+
+  /* -----------------------------------------------------------
      MODE-DEPENDENT DATA PIPELINES
   ----------------------------------------------------------- */
 
   // SIMULATION MODE (synthetic data)
   useSimulation(
-    mode,
+    mode === "manual-simulation" ? "simulation" : null,
     setTemperature,
     setHumidity,
     setPressure,
@@ -118,28 +150,52 @@ export default function WeatherDashboard() {
         deviceOnline={deviceOnline}
       />
 
-      <SensorReadingsSection
-        metricsPrimary={metricsPrimary}
-        metricsDerived={metricsDerived}
-        openKey={openKey}
-        setOpenKey={setOpenKey}
-      />
+      {/* Show Manual Simulation FIRST in simulation mode */}
+      {mode === "manual-simulation" && (
+        <ManualSimulationSection
+          temperature={temperature}
+          setTemperature={setTemperature}
+          humidity={humidity}
+          setHumidity={setHumidity}
+          pressure={pressure}
+          setPressure={setPressure}
+          weather={weather}
+        />
+      )}
 
-      <HistoryDataSection chartData={chartData} />
+      {/* Show Sensor Readings only in sensor mode */}
+      {mode === "sensor" && (
+        <SensorReadingsSection
+          metricsPrimary={metricsPrimary}
+          metricsDerived={metricsDerived}
+          openKey={openKey}
+          setOpenKey={setOpenKey}
+          isVisible={mode === "sensor"}
+        />
+      )}
 
-      <InterpretationGuideSection />
+      {/* Hide chart in simulation mode */}
+      {mode !== "manual-simulation" && (
+        <HistoryDataSection chartData={chartData} />
+      )}
 
-      <WeatherStatusGuideSection />
+      {/* Show interpretation & status guides ONLY in simulation mode */}
+      {mode === "manual-simulation" && <InterpretationGuideSection />}
 
-      <SmartControlsSection
-        brightness={brightness}
-        setBrightness={setBrightness}
-        speed={speed}
-        setSpeed={setSpeed}
-        currentWeather={currentWeather}
-        setCurrentWeather={setCurrentWeather}
-        publish={publish}
-      />
+      {mode === "manual-simulation" && <WeatherStatusGuideSection />}
+
+      {/* Show Smart Controls only in sensor mode */}
+      {mode === "sensor" && (
+        <SmartControlsSection
+          brightness={brightness}
+          setBrightness={setBrightness}
+          speed={speed}
+          setSpeed={setSpeed}
+          currentWeather={currentWeather}
+          setCurrentWeather={setCurrentWeather}
+          publish={publish}
+        />
+      )}
     </div>
   );
 }

@@ -136,10 +136,14 @@ const MetricCard = React.memo(function MetricCard({
             r="22"
             strokeWidth="6"
             stroke={arcColor}
-            strokeDasharray={`${arcPercent * 138} 138`} // 138 ≈ circumference
+            strokeDasharray={`${arcPercent * 138} 138`}
             strokeLinecap="round"
             fill="none"
-            transform="rotate(-90 26 26)" // start arc at top instead of right
+            transform="rotate(-90 26 26)"
+            style={{
+              transition:
+                "stroke-dasharray 0.6s ease-out, stroke 0.3s ease-out",
+            }}
           />
         </svg>
       </div>

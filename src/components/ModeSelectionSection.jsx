@@ -24,46 +24,46 @@ export default function ModeSelector({ mode, setMode, deviceOnline }) {
            ============================ */}
         <SectionHeader
           title="Data Source Mode"
-          subtitle="Use live ESP32 sensor telemetry or switch to smooth simulation mode"
+          subtitle="Use live ESP32 sensor telemetry or switch to manual simulation mode"
           icon={<span className="text-6xl cursor-pointer">⚙️</span>}
         />
 
         {/* ============================
             MODE SELECTION GRID
-            Two selectable cards: Simulation vs Sensor
+            Two selectable cards: Manual Simulation vs Sensor
            ============================ */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-6">
           {/* ============================
-              SIMULATION MODE CARD
-              Used when user wants fake/smooth values for testing UI
+              MANUAL SIMULATION MODE CARD
+              Used when user wants to manually control values via sliders
              ============================ */}
           <button
-            onClick={() => setMode("simulation")}
+            onClick={() => setMode("manual-simulation")}
             className={`
               group relative p-6 rounded-2xl text-left transition-all
               bg-white/50 backdrop-blur-xl border shadow-sm
               hover:shadow-xl hover:-translate-y-1
               ${
-                mode === "simulation"
+                mode === "manual-simulation"
                   ? "border-teal-500/40 shadow-[0_0_25px_rgba(20,184,166,0.3)]"
                   : "border-white/30"
               }
             `}
           >
-            {/* Active glow effect when simulation is selected */}
-            {mode === "simulation" && (
+            {/* Active glow effect when manual simulation is selected */}
+            {mode === "manual-simulation" && (
               <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-teal-300/30 to-blue-300/10 blur-xl opacity-60" />
             )}
 
             {/* Icon and label block */}
             <div className="relative z-10 flex items-center gap-4">
-              <div className="text-5xl">🧪</div>
+              <div className="text-5xl">🎮</div>
               <div>
                 <h3 className="text-lg font-bold text-gray-900">
-                  Simulation Mode
+                  Manual Simulation
                 </h3>
                 <p className="text-sm text-gray-700/80">
-                  Smooth synthetic readings for UI testing.
+                  User-controlled sliders for testing.
                 </p>
               </div>
             </div>
@@ -107,7 +107,7 @@ export default function ModeSelector({ mode, setMode, deviceOnline }) {
         {/* ============================
             STATUS BADGE
             Shows device/simulation state:
-              - Simulation Active
+              - Manual Simulation Active
               - Device Online
               - Device Offline
            ============================ */}
@@ -117,7 +117,7 @@ export default function ModeSelector({ mode, setMode, deviceOnline }) {
               px-4 py-2 rounded-full text-sm font-semibold tracking-wide
               backdrop-blur-xl border transition-all shadow-lg
               ${
-                mode === "simulation"
+                mode === "manual-simulation"
                   ? "bg-gray-300/50 text-gray-900 border-gray-200/40"
                   : deviceOnline
                   ? "bg-green-500/90 text-white border-green-400/40 shadow-[0_0_12px_rgba(34,197,94,0.6)]"
@@ -125,8 +125,8 @@ export default function ModeSelector({ mode, setMode, deviceOnline }) {
               }
             `}
           >
-            {mode === "simulation"
-              ? "Simulation Active"
+            {mode === "manual-simulation"
+              ? "Manual Simulation Active"
               : deviceOnline
               ? "Device Online"
               : "Device Offline"}
