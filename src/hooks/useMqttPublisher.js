@@ -14,11 +14,9 @@ import { useCallback } from "react";
 export function useMqttPublisher(client) {
   const publish = useCallback(
     (topic, message) => {
-      // Ignore publish attempts if client isn't ready
-      if (!client || !client.isConnected()) return;
+      if (!client || !client.connected) return;
 
-      // QoS = 0, retain = false by default
-      client.send(topic, message, 0, false);
+      client.publish(topic, String(message));
     },
     [client]
   );

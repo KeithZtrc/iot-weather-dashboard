@@ -35,8 +35,8 @@ export default function SmartControlsSection({
   setSpeed,
   publish,
 }) {
-  const brightnessLevels = [50, 128, 255];
-  const speedLevels = [20, 50, 100];
+  const brightnessLevels = [255, 128, 50];
+  const speedLevels = [100, 50, 20];
 
   return (
     <motion.div
