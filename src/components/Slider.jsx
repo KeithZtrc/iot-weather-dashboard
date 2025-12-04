@@ -48,7 +48,7 @@ export default function PremiumSlider({
          ----------------------------------------------------------------- */}
       <div className="flex justify-between items-end mb-6">
         <div>
-          <label className="text-lg font-bold text-gray-800 block mb-2">
+          <label className="text-xl font-bold text-gray-800 block mb-2">
             {label}
           </label>
           <p className="text-sm text-gray-600">{sublabel}</p>

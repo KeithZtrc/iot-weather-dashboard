@@ -178,7 +178,7 @@ export default function ManualSimulationSection({
       <div className="space-y-12 mb-12">
         <PremiumSlider
           label="Temperature"
-          sublabel="0°C to 50°C"
+          sublabel="The measure of how hot or cold the air is. It reflects the amount of heat energy in the atmosphere."
           value={temperature}
           min={0}
           max={50}
@@ -190,7 +190,7 @@ export default function ManualSimulationSection({
 
         <PremiumSlider
           label="Humidity"
-          sublabel="0% to 100%"
+          sublabel="The amount of water vapor in the air. Higher humidity means the air feels more moist; lower humidity means it feels dry."
           value={humidity}
           min={0}
           max={100}
@@ -202,7 +202,7 @@ export default function ManualSimulationSection({
 
         <PremiumSlider
           label="Pressure"
-          sublabel="95 kPa to 110 kPa"
+          sublabel="The weight of the air pressing down on the Earth. Changes in pressure help indicate shifts in the weather, like approaching storms or clearing skies."
           value={pressure}
           min={95}
           max={110}
