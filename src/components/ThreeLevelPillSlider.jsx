@@ -1,10 +1,20 @@
 import { motion } from "framer-motion";
 
-/* ==========================================================
-   Three-Level Pill Slider
-   - Used for brightness, animation speed, etc.
-   - Provides a smooth animated selector with 3 options.
-========================================================== */
+/* ---------------------------------------------------------------------
+   THREE-LEVEL PILL SLIDER
+   ----------------------------------------------------------------------
+   Purpose:
+   - Provides a simple 3-step selector (Low → Medium → High)
+   - Used for:
+       • LED Brightness levels
+       • Animation Speed levels
+       • Any 3-value discrete control
+   - Includes:
+       • Floating decorative glows
+       • Smooth motion using Framer Motion
+       • Rounded glassmorphic slider track
+       • Auto-animated selection pill with gradient background
+---------------------------------------------------------------------- */
 
 export default function ThreeLevelPillSlider({
   label,
@@ -13,6 +23,7 @@ export default function ThreeLevelPillSlider({
   onChange,
   colors = {},
 }) {
+  // Display labels for the three selection steps
   const levels = ["Low", "Medium", "High"];
 
   return (
@@ -26,27 +37,34 @@ export default function ThreeLevelPillSlider({
         overflow-hidden
       "
     >
-      {/* -----------------------------------------------
-          Decorative floating glows
-          (GPU-friendly: translate animations only)
-      ------------------------------------------------ */}
+      {/* -----------------------------------------------------------------
+         FLOATING DECORATIVE GLOWS
+         - Purely visual depth elements
+         - GPU-friendly transforms
+         ----------------------------------------------------------------- */}
       <motion.div
         animate={{ x: [0, 6, -6, 0], y: [0, -5, 4, 0] }}
         transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-        className="pointer-events-none absolute -top-10 -right-10 h-28 w-28 rounded-full bg-teal-400/20 blur-3xl"
+        className="
+          pointer-events-none absolute -top-10 -right-10
+          h-28 w-28 rounded-full bg-teal-400/20 blur-3xl
+        "
       />
 
       <motion.div
         animate={{ x: [0, -4, 4, 0], y: [0, 4, -3, 0] }}
         transition={{ duration: 11, repeat: Infinity, ease: "easeInOut" }}
-        className="pointer-events-none absolute bottom-0 left-0 h-20 w-20 rounded-full bg-blue-300/20 blur-2xl"
+        className="
+          pointer-events-none absolute bottom-0 left-0
+          h-20 w-20 rounded-full bg-blue-300/20 blur-2xl
+        "
       />
 
-      {/* -----------------------------------------------
-          Label + Description
-      ------------------------------------------------ */}
+      {/* -----------------------------------------------------------------
+         LABEL + OPTIONAL DESCRIPTION
+         ----------------------------------------------------------------- */}
       <div className="mb-5">
-        <p className="text-gray-900/90 font-semibold tracking-wide text-sm font-bold">
+        <p className="text-gray-900/90 font-semibold tracking-wide text-sm">
           {label}
         </p>
 
@@ -57,21 +75,22 @@ export default function ThreeLevelPillSlider({
         )}
       </div>
 
-      {/* -----------------------------------------------
-          Outer pill wrapper
-      ------------------------------------------------ */}
+      {/* -----------------------------------------------------------------
+         OUTER PILL TRACK
+         - Holds the moving indicator + buttons
+         ----------------------------------------------------------------- */}
       <div
         className="
           relative flex rounded-full p-2 h-14
-          bg-white/40 backdrop-blur-xl border border-white/50
-          shadow-inner
+          bg-white/40 backdrop-blur-xl
+          border border-white/50 shadow-inner
         "
       >
-        {/* -----------------------------------------------
-            Animated selection indicator
-            - Moves smoothly based on index (0–2)
-            - Background gradient passed from parent
-        ------------------------------------------------ */}
+        {/* ---------------------------------------------------------------
+           ANIMATED SELECTION INDICATOR
+           - Moves according to the active index (0 → 1 → 2)
+           - Gradient background supplied by parent
+           --------------------------------------------------------------- */}
         <motion.div
           layout
           className="absolute top-2 bottom-2 rounded-full"
@@ -83,11 +102,11 @@ export default function ThreeLevelPillSlider({
           transition={{ type: "spring", stiffness: 180, damping: 18 }}
         />
 
-        {/* -----------------------------------------------
-            Individual buttons
-            - Smooth tap scale
-            - Active item uses white text for contrast
-        ------------------------------------------------ */}
+        {/* ---------------------------------------------------------------
+           BUTTONS (3 LEVELS)
+           - Text changes color based on active selection
+           - Interactive tap shrink animation
+           --------------------------------------------------------------- */}
         {levels.map((lvl, i) => (
           <motion.button
             key={lvl}

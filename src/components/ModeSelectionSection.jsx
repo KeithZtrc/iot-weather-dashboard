@@ -1,42 +1,53 @@
 import SectionHeader from "./SectionHeader.jsx";
 
+/* ---------------------------------------------------------------------
+   MODE SELECTOR COMPONENT
+   ----------------------------------------------------------------------
+   Purpose:
+   - Lets the user switch between:
+       • Manual Simulation (UI-driven dummy data)
+       • Sensor Mode (live ESP32 telemetry)
+   - Visually highlights active mode
+   - Shows device status (online / offline / manual)
+---------------------------------------------------------------------- */
+
 export default function ModeSelector({ mode, setMode, deviceOnline }) {
   return (
     <div className="max-w-7xl mx-auto mb-10">
       <div
         className="
-          relative rounded-2xl  p-6
-          bg-white/40 backdrop-blur-xl
+          relative rounded-2xl p-6
+          bg-white/40 backdrop-blur-xl border border-white/20
           shadow-[0_8px_25px_rgba(0,0,0,0.08)]
-          border border-white/20
           overflow-hidden
         "
       >
-        {/* ============================
-            Ambient floating background glows
-            Adds soft motionless depth to the card
-           ============================ */}
+        {/* -----------------------------------------------------------------
+           BACKGROUND FLOATING GLOW ELEMENTS
+           - Decorative, subtle depth lighting
+           ----------------------------------------------------------------- */}
         <div className="absolute -top-10 -right-10 w-40 h-40 bg-teal-300/20 blur-3xl rounded-full pointer-events-none" />
         <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-blue-300/20 blur-2xl rounded-full pointer-events-none" />
 
-        {/* ============================
-            Section title and subtitle
-           ============================ */}
+        {/* -----------------------------------------------------------------
+           SECTION HEADER
+           - Title, subtitle, and icon representing data mode selection
+           ----------------------------------------------------------------- */}
         <SectionHeader
           title="Data Source Mode"
           subtitle="Use live ESP32 sensor telemetry or switch to manual simulation mode"
           icon={<span className="text-6xl cursor-pointer">⚙️</span>}
         />
 
-        {/* ============================
-            MODE SELECTION GRID
-            Two selectable cards: Manual Simulation vs Sensor
-           ============================ */}
+        {/* -----------------------------------------------------------------
+           MODE SELECTION GRID
+           - Two selectable cards side by side
+           ----------------------------------------------------------------- */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-6">
-          {/* ============================
-              MANUAL SIMULATION MODE CARD
-              Used when user wants to manually control values via sliders
-             ============================ */}
+          {/* -----------------------------------------------------------------
+             MANUAL SIMULATION MODE CARD
+             - For UI/UX testing without hardware
+             ----------------------------------------------------------------- */}
           <button
             onClick={() => setMode("manual-simulation")}
             className={`
@@ -50,12 +61,12 @@ export default function ModeSelector({ mode, setMode, deviceOnline }) {
               }
             `}
           >
-            {/* Active glow effect when manual simulation is selected */}
+            {/* Highlight glow when selected */}
             {mode === "manual-simulation" && (
               <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-teal-300/30 to-blue-300/10 blur-xl opacity-60" />
             )}
 
-            {/* Icon and label block */}
+            {/* Card content */}
             <div className="relative z-10 flex items-center gap-4">
               <div className="text-5xl">🎮</div>
               <div>
@@ -69,10 +80,10 @@ export default function ModeSelector({ mode, setMode, deviceOnline }) {
             </div>
           </button>
 
-          {/* ============================
-              SENSOR MODE CARD
-              Pulls live data from ESP32 MQTT source
-             ============================ */}
+          {/* -----------------------------------------------------------------
+             SENSOR MODE CARD
+             - Pulls real-time telemetry from ESP32 via MQTT
+             ----------------------------------------------------------------- */}
           <button
             onClick={() => setMode("sensor")}
             className={`
@@ -86,12 +97,12 @@ export default function ModeSelector({ mode, setMode, deviceOnline }) {
               }
             `}
           >
-            {/* Active glow effect when sensor mode is selected */}
+            {/* Highlight glow when selected */}
             {mode === "sensor" && (
               <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-blue-400/30 to-cyan-300/10 blur-xl opacity-60" />
             )}
 
-            {/* Icon + label block */}
+            {/* Card content */}
             <div className="relative z-10 flex items-center gap-4">
               <div className="text-5xl">📡</div>
               <div>
@@ -104,13 +115,13 @@ export default function ModeSelector({ mode, setMode, deviceOnline }) {
           </button>
         </div>
 
-        {/* ============================
-            STATUS BADGE
-            Shows device/simulation state:
-              - Manual Simulation Active
-              - Device Online
-              - Device Offline
-           ============================ */}
+        {/* -----------------------------------------------------------------
+           DEVICE / MODE STATUS BADGE
+           Shows:
+             - Manual Simulation Active
+             - Device Online
+             - Device Offline
+           ----------------------------------------------------------------- */}
         <div className="mt-8">
           <span
             className={`

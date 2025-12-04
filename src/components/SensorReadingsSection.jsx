@@ -2,6 +2,14 @@ import { motion } from "framer-motion";
 import SectionHeader from "./SectionHeader.jsx";
 import MetricCard from "./MetricCard.jsx";
 
+/* ---------------------------------------------------------------------
+   ANIMATION VARIANTS
+   ----------------------------------------------------------------------
+   Purpose:
+   - Define staggered fade/slide animations for metric card grids
+   - Used by Framer Motion parent + child motion.div elements
+---------------------------------------------------------------------- */
+
 const container = {
   hidden: { opacity: 0 },
   show: {
@@ -25,6 +33,17 @@ const item = {
   },
 };
 
+/* ---------------------------------------------------------------------
+   SENSOR READINGS SECTION
+   ----------------------------------------------------------------------
+   Purpose:
+   - Displays two groups of weather metrics:
+       • Primary metrics: temperature, humidity, pressure
+       • Derived metrics: heat index, dew point, absolute humidity
+   - Each metric is shown using MetricCard (with popovers & arc visuals)
+   - Section includes animated grid transitions and a glassy container
+---------------------------------------------------------------------- */
+
 export default function SensorReadingsSection({
   metricsPrimary,
   metricsDerived,
@@ -37,23 +56,26 @@ export default function SensorReadingsSection({
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.6 }}
-      className="max-w-7xl mx-auto rounded-2xl px-6 py-8
-                 bg-white/40 backdrop-blur-xl shadow-md border border-white/20 mb-10"
+      className="
+        max-w-7xl mx-auto rounded-2xl px-6 py-8 mb-10
+        bg-white/40 backdrop-blur-xl
+        shadow-md border border-white/20
+      "
     >
-      {/* ============================
-          Section Header
-          Title, subtitle, and icon for the readings module
-         ============================ */}
+      {/* -----------------------------------------------------------------
+         SECTION HEADER — Title, subtitle, and icon
+         ----------------------------------------------------------------- */}
       <SectionHeader
         title="Sensor Readings"
         subtitle="Live atmospheric parameters updating every 3 seconds"
         icon={<span className="text-6xl cursor-pointer">📡</span>}
       />
 
-      {/* ============================
-          Primary Metric Group
-          Temperature, humidity, pressure, etc.
-         ============================ */}
+      {/* -----------------------------------------------------------------
+         PRIMARY METRIC GROUP
+         - Temperature, humidity, pressure
+         - Uses staggered child animations
+         ----------------------------------------------------------------- */}
       <motion.div
         variants={container}
         initial="hidden"
@@ -79,10 +101,11 @@ export default function SensorReadingsSection({
         ))}
       </motion.div>
 
-      {/* ============================
-          Derived Metric Group
-          Heat index, dew point, absolute humidity, etc.
-         ============================ */}
+      {/* -----------------------------------------------------------------
+         DERIVED METRIC GROUP
+         - Heat index, dew point, absolute humidity, etc.
+         - Slight delay to create layered reveal effect
+         ----------------------------------------------------------------- */}
       <motion.div
         variants={container}
         initial="hidden"

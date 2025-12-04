@@ -5,6 +5,7 @@ export const MQTT_TOPICS = {
   data: "nes/finalsproject/g1weatherstation/data",
   ledBrightness: "nes/finalsproject/g1weatherstation/led/brightness",
   ledSpeed: "nes/finalsproject/g1weatherstation/led/speed",
+  ledWeather: "nes/finalsproject/g1weatherstation/led/weather",
 };
 
 export const MQTT_CONFIG = {

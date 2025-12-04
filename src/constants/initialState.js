@@ -1,5 +1,5 @@
 export const INITIAL_STATE = {
-  mode: "simulation",
+  mode: "manual-simulation",
   deviceOnline: false,
   temperature: 25,
   humidity: 60,

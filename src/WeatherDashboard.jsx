@@ -5,8 +5,7 @@ import { useSimulation } from "./hooks/useSimulation.js";
 import { useMqttSensor } from "./hooks/useMqttSensor.js";
 
 import { getMetricsPrimary, getMetricsDerived } from "./utils/metricsConfig.js";
-import { getWeatherStatus } from "./utils/weatherUtils.js";
-import { computeDerived } from "./utils/weatherUtils.js";
+import { getWeatherStatus, computeDerived } from "./utils/weatherUtils.js";
 
 import { INITIAL_STATE } from "./constants/initialState.js";
 
@@ -21,42 +20,55 @@ import SmartControlsSection from "./components/SmartControlsSection.jsx";
 import ManualSimulationSection from "./components/ManualSimulationSection.jsx";
 
 /* ---------------------------------------------------------------------
-   WEATHER DASHBOARD ROOT
+   WEATHER DASHBOARD ROOT COMPONENT
    ---------------------------------------------------------------------
-   Central Orchestrator:
-   - Maintains core environmental states
-   - Chooses between SIMULATION and SENSOR mode
-   - Passes computed values to visual/UI components
-   - Delegates:
-       • MQTT sensor input
-       • Simulation generator
-       • Derived calculations pipeline
+   Acts as the central controller for the entire application.
+
+   Responsibilities:
+   ✓ Maintains environmental state (temperature, humidity, pressure, etc.)
+   ✓ Chooses between SENSOR mode and SIMULATION mode
+   ✓ Subscribes to MQTT topics for live sensor data
+   ✓ Runs synthetic data stream in manual simulation mode
+   ✓ Calculates derived environmental metrics
+   ✓ Passes all UI-ready data to presentation components
 ------------------------------------------------------------------------ */
 
 export default function WeatherDashboard() {
   /* -----------------------------------------------------------
-     CORE MODE and DEVICE STATUS
+     GLOBAL MODE & DEVICE STATUS
+     -----------------------------------------------------------
+     mode          → "sensor" | "manual-simulation"
+     deviceOnline  → tracks if MQTT-connected device is reachable
   ----------------------------------------------------------- */
   const [mode, setMode] = useState(INITIAL_STATE.mode);
   const [deviceOnline, setDeviceOnline] = useState(INITIAL_STATE.deviceOnline);
 
-  /* MQTT client instance */
+  /* MQTT client instance + publishing hook */
   const [mqttClient, setMqttClient] = useState(null);
   const { publish } = useMqttPublisher(mqttClient);
 
   /* -----------------------------------------------------------
-     SENSOR METRICS (Primary and Derived)
+     PRIMARY SENSOR METRICS
+     -----------------------------------------------------------
+     These values come from either:
+       • MQTT sensor data (sensor mode), or
+       • Simulation generator (manual simulation mode)
   ----------------------------------------------------------- */
   const [temperature, setTemperature] = useState(INITIAL_STATE.temperature);
   const [humidity, setHumidity] = useState(INITIAL_STATE.humidity);
   const [pressure, setPressure] = useState(INITIAL_STATE.pressure);
 
+  /* -----------------------------------------------------------
+     DERIVED METRICS (calculated automatically)
+     -----------------------------------------------------------
+     Derived from primary metrics on each update via utils
+  ----------------------------------------------------------- */
   const [heatIndex, setHeatIndex] = useState(INITIAL_STATE.heatIndex);
   const [dewPoint, setDewPoint] = useState(INITIAL_STATE.dewPoint);
   const [absHumidity, setAbsHumidity] = useState(INITIAL_STATE.absHumidity);
 
   /* -----------------------------------------------------------
-     UI CONTROL STATES
+     UI STATE (smart controls, accordion, etc.)
   ----------------------------------------------------------- */
   const [brightness, setBrightness] = useState(INITIAL_STATE.brightness);
   const [speed, setSpeed] = useState(INITIAL_STATE.speed);
@@ -64,21 +76,24 @@ export default function WeatherDashboard() {
 
   const [openKey, setOpenKey] = useState(INITIAL_STATE.openKey);
 
-  /* Chart: sparkline of last N readings */
+  /* Sparkline chart history (last N readings) */
   const [chartData, setChartData] = useState(INITIAL_STATE.chartData);
 
   /* -----------------------------------------------------------
-     SYNC DERIVED METRICS & CHART DATA
-     Whenever primary metrics change, update derived values
-     and append to chart history
+     DERIVED METRIC SYNC + CHART UPDATES
+     -----------------------------------------------------------
+     Whenever primary metrics change:
+       → recompute derived values
+       → append entry to sparkline history
   ----------------------------------------------------------- */
   useEffect(() => {
+    // Update derived metrics based on latest sensor values
     const derived = computeDerived(temperature, humidity, pressure);
     setHeatIndex(derived.heatIndex);
     setDewPoint(derived.dewPoint);
     setAbsHumidity(derived.absHumidity);
 
-    // Append to chart (keep last 20)
+    // Append new data point (hh:mm) and keep last 20 entries
     const now = new Date();
     const timeStr = `${String(now.getHours()).padStart(2, "0")}:${String(
       now.getMinutes()
@@ -98,10 +113,14 @@ export default function WeatherDashboard() {
   }, [temperature, humidity, pressure]);
 
   /* -----------------------------------------------------------
-     MODE-DEPENDENT DATA PIPELINES
+     DATA INPUT PIPELINES
+     -----------------------------------------------------------
+     Pipeline depends on active mode:
+     • manual-simulation → synthetic data stream via useSimulation
+     • sensor           → MQTT live data via useMqttSensor
   ----------------------------------------------------------- */
 
-  // SIMULATION MODE (synthetic data)
+  // Simulation mode: generate continuous synthetic data
   useSimulation(
     mode === "manual-simulation" ? "simulation" : null,
     setTemperature,
@@ -113,7 +132,7 @@ export default function WeatherDashboard() {
     setChartData
   );
 
-  // SENSOR MODE (MQTT data input)
+  // Sensor mode: subscribe to MQTT and update metrics on messages
   useMqttSensor(
     mode,
     setMqttClient,
@@ -128,18 +147,23 @@ export default function WeatherDashboard() {
   );
 
   /* -----------------------------------------------------------
-     DERIVED VISUAL DATA
+     COMPUTED VISUAL DATA
+     -----------------------------------------------------------
+     Prepares human-readable summaries for UI panels
   ----------------------------------------------------------- */
   const weather = getWeatherStatus(temperature, humidity, pressure);
   const metricsPrimary = getMetricsPrimary(temperature, humidity, pressure);
   const metricsDerived = getMetricsDerived(heatIndex, dewPoint, absHumidity);
 
   /* -----------------------------------------------------------
-     RENDER
+     RENDER LAYOUT
+     -----------------------------------------------------------
+     Page is composed of modular UI sections, conditionally
+     displayed depending on active mode.
   ----------------------------------------------------------- */
   return (
     <div className="relative min-h-screen w-full overflow-hidden">
-      {/* Dynamic gradient/atmospheric overlay */}
+      {/* Dynamic atmospheric background layer */}
       <WeatherLayer effect={weather.effect} />
 
       <HeaderSection weather={weather} />
@@ -150,7 +174,7 @@ export default function WeatherDashboard() {
         deviceOnline={deviceOnline}
       />
 
-      {/* Show Manual Simulation FIRST in simulation mode */}
+      {/* Manual Simulation Tools (only in simulation mode) */}
       {mode === "manual-simulation" && (
         <ManualSimulationSection
           temperature={temperature}
@@ -163,7 +187,7 @@ export default function WeatherDashboard() {
         />
       )}
 
-      {/* Show Sensor Readings only in sensor mode */}
+      {/* Realtime Sensor Readings (only in sensor mode) */}
       {mode === "sensor" && (
         <SensorReadingsSection
           metricsPrimary={metricsPrimary}
@@ -174,17 +198,14 @@ export default function WeatherDashboard() {
         />
       )}
 
-      {/* Hide chart in simulation mode */}
-      {mode !== "manual-simulation" && (
-        <HistoryDataSection chartData={chartData} />
-      )}
+      {/* Historic chart (sensor mode only) */}
+      {mode === "sensor" && <HistoryDataSection chartData={chartData} />}
 
-      {/* Show interpretation & status guides ONLY in simulation mode */}
+      {/* Interpretation & weather status guides (simulation only) */}
       {mode === "manual-simulation" && <InterpretationGuideSection />}
-
       {mode === "manual-simulation" && <WeatherStatusGuideSection />}
 
-      {/* Show Smart Controls only in sensor mode */}
+      {/* MQTT Smart Controls (sensor mode only) */}
       {mode === "sensor" && (
         <SmartControlsSection
           brightness={brightness}

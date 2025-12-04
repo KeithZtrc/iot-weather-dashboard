@@ -1,5 +1,19 @@
 import { motion } from "framer-motion";
 import SectionHeader from "./SectionHeader.jsx";
+import PremiumSlider from "./Slider.jsx";
+
+/* ---------------------------------------------------------------------
+   MANUAL SIMULATION CONTROL SECTION
+   ---------------------------------------------------------------------
+   Purpose:
+   - Allows users to manually manipulate temperature, humidity, and pressure
+     to test how the system responds to custom conditions.
+   - Provides:
+       ✓ Summary stat cards with color-coded gradients
+       ✓ Three premium sliders (Temp / Humidity / Pressure)
+       ✓ Random generator button for testing
+   - Used only in: "manual-simulation" mode
+------------------------------------------------------------------------ */
 
 export default function ManualSimulationSection({
   temperature,
@@ -8,8 +22,16 @@ export default function ManualSimulationSection({
   setHumidity,
   pressure,
   setPressure,
-  weather,
+  weather, // Currently unused, but may support contextual UI later
 }) {
+  /* -----------------------------------------------------------
+     RANDOM VALUE GENERATOR
+     -----------------------------------------------------------
+     Used for quickly generating test conditions.
+     Temperature: 20–35°C
+     Humidity:    40–100%
+     Pressure:    100–105 kPa
+  ----------------------------------------------------------- */
   const handleGenerateValues = () => {
     const newTemp = +(20 + Math.random() * 15).toFixed(1);
     const newHum = Math.round(40 + Math.random() * 60);
@@ -21,9 +43,14 @@ export default function ManualSimulationSection({
   };
 
   /* -----------------------------------------------------------
-     Color guides based on value ranges
-     Reflects real-world weather impact
+     COLOR GRADIENT GENERATORS
+     -----------------------------------------------------------
+     Used to dynamically color:
+       • Summary cards
+       • Sliders (via gradientClass)
+     Ranges chosen to visually reflect environmental severity.
   ----------------------------------------------------------- */
+
   const getTempColor = () => {
     if (temperature < 0) return "from-blue-600 to-cyan-500";
     if (temperature < 10) return "from-blue-500 to-cyan-400";
@@ -48,6 +75,12 @@ export default function ManualSimulationSection({
     if (pressure < 103) return "from-cyan-400 to-blue-400";
     return "from-blue-500 to-purple-500";
   };
+
+  /* -----------------------------------------------------------
+     LABEL GENERATORS (Human-Friendly Descriptions)
+     -----------------------------------------------------------
+     Used under summary cards to describe conditions.
+  ----------------------------------------------------------- */
 
   const getTempLabel = () => {
     if (temperature < 0) return "Freezing";
@@ -74,6 +107,16 @@ export default function ManualSimulationSection({
     return "Very High";
   };
 
+  /* -----------------------------------------------------------
+     RENDER SECTION
+     -----------------------------------------------------------
+     Layout:
+     • Header (title, subtitle, controller icon)
+     • Three colored summary cards
+     • Three premium sliders
+     • Random value generator button
+  ----------------------------------------------------------- */
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -92,248 +135,87 @@ export default function ManualSimulationSection({
         icon={<span className="text-6xl cursor-pointer">🎮</span>}
       />
 
-      {/* Current Values Display with Color Guides */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6 mb-8">
+      {/* ---------------------------------------------------------
+          SUMMARY CARDS (Temperature / Humidity / Pressure)
+         --------------------------------------------------------- */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6 mb-8 cursor-pointer">
+        {/* Temperature Card */}
         <motion.div
           whileHover={{ scale: 1.02 }}
-          className={`
-            rounded-2xl p-6
-            bg-gradient-to-br ${getTempColor()}
-            backdrop-blur-xl border border-white/30 shadow-lg
-            text-white
-          `}
+          className={`rounded-2xl p-6 bg-gradient-to-br ${getTempColor()} backdrop-blur-xl border border-white/30 shadow-lg text-white`}
         >
           <p className="text-sm font-semibold text-white/80 mb-2">
             Temperature
           </p>
-          <p className="text-5xl font-bold">{temperature}°C</p>
+          <p className="text-5xl font-bold">{temperature.toFixed(1)}°C</p>
           <p className="text-xs text-white/70 mt-2">{getTempLabel()}</p>
         </motion.div>
 
+        {/* Humidity Card */}
         <motion.div
           whileHover={{ scale: 1.02 }}
-          className={`
-            rounded-2xl p-6
-            bg-gradient-to-br ${getHumidityColor()}
-            backdrop-blur-xl border border-white/30 shadow-lg
-            text-white
-          `}
+          className={`rounded-2xl p-6 bg-gradient-to-br ${getHumidityColor()} backdrop-blur-xl border border-white/30 shadow-lg text-white`}
         >
           <p className="text-sm font-semibold text-white/80 mb-2">Humidity</p>
-          <p className="text-5xl font-bold">{humidity}%</p>
+          <p className="text-5xl font-bold">{humidity.toFixed(1)}%</p>
           <p className="text-xs text-white/70 mt-2">{getHumidityLabel()}</p>
         </motion.div>
 
+        {/* Pressure Card */}
         <motion.div
           whileHover={{ scale: 1.02 }}
-          className={`
-            rounded-2xl p-6
-            bg-gradient-to-br ${getPressureColor()}
-            backdrop-blur-xl border border-white/30 shadow-lg
-            text-white
-          `}
+          className={`rounded-2xl p-6 bg-gradient-to-br ${getPressureColor()} backdrop-blur-xl border border-white/30 shadow-lg text-white`}
         >
           <p className="text-sm font-semibold text-white/80 mb-2">Pressure</p>
-          <p className="text-5xl font-bold">{pressure}</p>
+          <p className="text-5xl font-bold">{pressure.toFixed(1)} kPa</p>
           <p className="text-xs text-white/70 mt-2">{getPressureLabel()}</p>
         </motion.div>
       </div>
 
-      {/* Large Sliders */}
-      {/* Large Sliders - Maximized Layout */}
+      {/* ---------------------------------------------------------
+          PREMIUM SLIDERS (interactive simulation controls)
+         --------------------------------------------------------- */}
       <div className="space-y-12 mb-12">
-        {/* Temperature Slider */}
-        <div className="rounded-2xl p-10 bg-white/20 backdrop-blur-xl border border-white/30">
-          <div className="flex justify-between items-end mb-6">
-            <div>
-              <label className="text-lg font-bold text-gray-800 block mb-2">
-                Temperature
-              </label>
-              <p className="text-sm text-gray-600">0°C to 50°C</p>
-            </div>
-            <span className="text-4xl font-bold text-gray-900">
-              {temperature}°C
-            </span>
-          </div>
-          <input
-            type="range"
-            min="0"
-            max="50"
-            step="0.1"
-            value={temperature}
-            onChange={(e) => setTemperature(parseFloat(e.target.value))}
-            className="w-full h-3 bg-gradient-to-r from-gray-300 to-gray-400 rounded-lg appearance-none cursor-pointer"
-            style={{
-              WebkitAppearance: "none",
-              appearance: "none",
-            }}
-          />
-          <style>{`
-            input[type='range']::-webkit-slider-thumb {
-              appearance: none;
-              width: 28px;
-              height: 28px;
-              border-radius: 50%;
-              background: white;
-              cursor: pointer;
-              box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
-              border: 2px solid #1f2937;
-              transition: transform 0.2s;
-            }
-            input[type='range']::-webkit-slider-thumb:hover {
-              transform: scale(1.15);
-              box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-            }
-            input[type='range']::-moz-range-thumb {
-              width: 28px;
-              height: 28px;
-              border-radius: 50%;
-              background: white;
-              cursor: pointer;
-              box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
-              border: 2px solid #1f2937;
-              transition: transform 0.2s;
-            }
-            input[type='range']::-moz-range-thumb:hover {
-              transform: scale(1.15);
-              box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-            }
-          `}</style>
-          <div className="flex justify-between text-sm text-gray-600 mt-3 px-2 font-medium">
-            <span>0°C</span>
-            <span>25°C</span>
-            <span>50°C</span>
-          </div>
-        </div>
+        <PremiumSlider
+          label="Temperature"
+          sublabel="0°C to 50°C"
+          value={temperature}
+          min={0}
+          max={50}
+          step={0.1}
+          unit="°C"
+          onChange={setTemperature}
+          gradientClass={getTempColor()}
+        />
 
-        {/* Humidity Slider */}
-        <div className="rounded-2xl p-10 bg-white/20 backdrop-blur-xl border border-white/30">
-          <div className="flex justify-between items-end mb-6">
-            <div>
-              <label className="text-lg font-bold text-gray-800 block mb-2">
-                Humidity
-              </label>
-              <p className="text-sm text-gray-600">0% to 100%</p>
-            </div>
-            <span className="text-4xl font-bold text-gray-900">
-              {humidity}%
-            </span>
-          </div>
-          <input
-            type="range"
-            min="0"
-            max="100"
-            step="1"
-            value={humidity}
-            onChange={(e) => setHumidity(parseInt(e.target.value))}
-            className="w-full h-3 bg-gradient-to-r from-gray-300 to-gray-400 rounded-lg appearance-none cursor-pointer"
-            style={{
-              WebkitAppearance: "none",
-              appearance: "none",
-            }}
-          />
-          <style>{`
-            input[type='range']::-webkit-slider-thumb {
-              appearance: none;
-              width: 28px;
-              height: 28px;
-              border-radius: 50%;
-              background: white;
-              cursor: pointer;
-              box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
-              border: 2px solid #1f2937;
-              transition: transform 0.2s;
-            }
-            input[type='range']::-webkit-slider-thumb:hover {
-              transform: scale(1.15);
-              box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-            }
-            input[type='range']::-moz-range-thumb {
-              width: 28px;
-              height: 28px;
-              border-radius: 50%;
-              background: white;
-              cursor: pointer;
-              box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
-              border: 2px solid #1f2937;
-              transition: transform 0.2s;
-            }
-            input[type='range']::-moz-range-thumb:hover {
-              transform: scale(1.15);
-              box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-            }
-          `}</style>
-          <div className="flex justify-between text-sm text-gray-600 mt-3 px-2 font-medium">
-            <span>0%</span>
-            <span>50%</span>
-            <span>100%</span>
-          </div>
-        </div>
+        <PremiumSlider
+          label="Humidity"
+          sublabel="0% to 100%"
+          value={humidity}
+          min={0}
+          max={100}
+          step={1}
+          unit="%"
+          onChange={setHumidity}
+          gradientClass={getHumidityColor()}
+        />
 
-        {/* Pressure Slider */}
-        <div className="rounded-2xl p-10 bg-white/20 backdrop-blur-xl border border-white/30">
-          <div className="flex justify-between items-end mb-6">
-            <div>
-              <label className="text-lg font-bold text-gray-800 block mb-2">
-                Pressure
-              </label>
-              <p className="text-sm text-gray-600">95 kPa to 110 kPa</p>
-            </div>
-            <span className="text-4xl font-bold text-gray-900">{pressure}</span>
-          </div>
-          <input
-            type="range"
-            min="95"
-            max="110"
-            step="0.1"
-            value={pressure}
-            onChange={(e) => setPressure(parseFloat(e.target.value))}
-            className="w-full h-3 bg-gradient-to-r from-gray-300 to-gray-400 rounded-lg appearance-none cursor-pointer"
-            style={{
-              WebkitAppearance: "none",
-              appearance: "none",
-            }}
-          />
-          <style>{`
-            input[type='range']::-webkit-slider-thumb {
-              appearance: none;
-              width: 28px;
-              height: 28px;
-              border-radius: 50%;
-              background: white;
-              cursor: pointer;
-              box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
-              border: 2px solid #1f2937;
-              transition: transform 0.2s;
-            }
-            input[type='range']::-webkit-slider-thumb:hover {
-              transform: scale(1.15);
-              box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-            }
-            input[type='range']::-moz-range-thumb {
-              width: 28px;
-              height: 28px;
-              border-radius: 50%;
-              background: white;
-              cursor: pointer;
-              box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
-              border: 2px solid #1f2937;
-              transition: transform 0.2s;
-            }
-            input[type='range']::-moz-range-thumb:hover {
-              transform: scale(1.15);
-              box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-            }
-          `}</style>
-          <div className="flex justify-between text-sm text-gray-600 mt-3 px-2 font-medium">
-            <span>95 kPa</span>
-            <span>102.5 kPa</span>
-            <span>110 kPa</span>
-          </div>
-        </div>
+        <PremiumSlider
+          label="Pressure"
+          sublabel="95 kPa to 110 kPa"
+          value={pressure}
+          min={95}
+          max={110}
+          step={0.1}
+          unit=" kPa"
+          onChange={setPressure}
+          gradientClass={getPressureColor()}
+        />
       </div>
 
-      {/* Generate Button */}
+      {/* ---------------------------------------------------------
+          RANDOM VALUE BUTTON
+         --------------------------------------------------------- */}
       <motion.button
         onClick={handleGenerateValues}
         whileTap={{ scale: 0.95 }}

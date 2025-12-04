@@ -81,15 +81,7 @@ export function getWeatherStatus(temp, hum, pres) {
     };
   }
 
-  // Priority ordering:
-  // 1) Storm conditions
-  // 2) Rain conditions
-  // 3) Chilly conditions
-  // 4) Heat conditions
-  // 5) Cloudy conditions
-  // 6) Sunny default
-
-  // ⛈ Stormy (low pressure and high humidity)
+  // Stormy (low pressure and high humidity)
   if (pres < 99.5 && hum > 80 && temp >= 15) {
     return {
       desc: "Stormy",
@@ -98,7 +90,7 @@ export function getWeatherStatus(temp, hum, pres) {
     };
   }
 
-  // 🌧 Rainy (very high humidity)
+  // Rainy (very high humidity)
   if (pres < 100.5 && hum > 85) {
     return {
       desc: "Rainy",
@@ -107,7 +99,7 @@ export function getWeatherStatus(temp, hum, pres) {
     };
   }
 
-  // ❄ Chilly
+  // Chilly
   if (temp <= 5 || (temp <= 10 && hum < 60 && pres > 102)) {
     return {
       desc: "Chilly",
@@ -116,7 +108,7 @@ export function getWeatherStatus(temp, hum, pres) {
     };
   }
 
-  // 🔥 Heat wave
+  // Heat wave
   if (temp >= 32 && hum < 60) {
     return {
       desc: "Hot",
@@ -125,7 +117,7 @@ export function getWeatherStatus(temp, hum, pres) {
     };
   }
 
-  // ☁ Cloudy (moderate humidity)
+  // Cloudy (moderate humidity)
   if (hum >= 60 && pres <= 101.5) {
     return {
       desc: "Cloudy",
@@ -134,7 +126,7 @@ export function getWeatherStatus(temp, hum, pres) {
     };
   }
 
-  // ☀ Default sunny
+  // Default sunny
   return {
     desc: "Sunny",
     lottie: sunnyAnim,
