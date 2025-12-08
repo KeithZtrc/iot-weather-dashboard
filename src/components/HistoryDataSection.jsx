@@ -22,6 +22,20 @@ import {
 ------------------------------------------------------------------------ */
 
 export default function HistoryDataSection({ chartData }) {
+  // ---------------------------------------------------------------
+  // TRANSFORM DATA FOR CONSISTENT X-AXIS
+  // Converts HH:MM:SS string into total seconds for proper scaling
+  // ---------------------------------------------------------------
+  const transformedData = chartData.map((item) => {
+    if (!item.time) return { ...item, timeSeconds: 0 };
+    const parts = item.time.split(":").map(Number);
+    const hours = parts[0] || 0;
+    const minutes = parts[1] || 0;
+    const seconds = parts[2] || 0;
+    const totalSeconds = hours * 3600 + minutes * 60 + seconds;
+    return { ...item, timeSeconds: totalSeconds };
+  });
+
   return (
     <div
       className="
@@ -75,24 +89,33 @@ export default function HistoryDataSection({ chartData }) {
                  ------------------------------------------------------- */}
               <div className="w-full h-64">
                 <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={chartData}>
+                  <LineChart data={transformedData}>
                     {/* Background grid for better readability */}
                     <CartesianGrid strokeDasharray="3 3" stroke="#ccc" />
 
                     {/* ----------------- X-AXIS -----------------
-                        Expects `time` in HH:MM:SS (24h) format.
-                        Converts to readable 12-hour time.
+                        Uses numeric time (seconds) for consistent spacing.
+                        Tick labels formatted to 12-hour time with optional seconds.
                     ------------------------------------------------ */}
                     <XAxis
-                      dataKey="time"
+                      dataKey="timeSeconds"
                       stroke="#333"
-                      tickFormatter={(time) => {
-                        const date = new Date(`2025-12-03T${time}`);
-                        return date.toLocaleTimeString("en-US", {
-                          hour: "2-digit",
-                          minute: "2-digit",
-                          hour12: true,
-                        });
+                      tickFormatter={(seconds) => {
+                        if (seconds == null) return "--:--";
+                        let h = Math.floor(seconds / 3600);
+                        let m = Math.floor((seconds % 3600) / 60);
+                        let s = seconds % 60;
+
+                        const ampm = h >= 12 ? "PM" : "AM";
+                        h = h % 12;
+                        if (h === 0) h = 12;
+
+                        const minuteStr = m.toString().padStart(2, "0");
+                        const secondStr = s.toString().padStart(2, "0");
+
+                        return s > 0
+                          ? `${h}:${minuteStr}:${secondStr} ${ampm}`
+                          : `${h}:${minuteStr} ${ampm}`;
                       }}
                     />
 
@@ -107,7 +130,22 @@ export default function HistoryDataSection({ chartData }) {
                     />
 
                     {/* Hover tooltip with live values */}
-                    <Tooltip />
+                    <Tooltip
+                      labelFormatter={(seconds) => {
+                        if (seconds == null) return "--:--";
+                        let h = Math.floor(seconds / 3600);
+                        let m = Math.floor((seconds % 3600) / 60);
+                        let s = seconds % 60;
+                        const ampm = h >= 12 ? "PM" : "AM";
+                        h = h % 12;
+                        if (h === 0) h = 12;
+                        const minuteStr = m.toString().padStart(2, "0");
+                        const secondStr = s.toString().padStart(2, "0");
+                        return s > 0
+                          ? `${h}:${minuteStr}:${secondStr} ${ampm}`
+                          : `${h}:${minuteStr} ${ampm}`;
+                      }}
+                    />
 
                     {/* ----------------- LINE SERIES -----------------
                         Smooth monotone curve
@@ -119,6 +157,7 @@ export default function HistoryDataSection({ chartData }) {
                       stroke={c.color}
                       strokeWidth={2}
                       dot={false}
+                      isAnimationActive={false}
                     />
                   </LineChart>
                 </ResponsiveContainer>
