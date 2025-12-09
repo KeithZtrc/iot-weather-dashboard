@@ -157,7 +157,6 @@ export default function HistoryDataSection({ chartData }) {
                       stroke={c.color}
                       strokeWidth={2}
                       dot={false}
-                      isAnimationActive={false}
                     />
                   </LineChart>
                 </ResponsiveContainer>
