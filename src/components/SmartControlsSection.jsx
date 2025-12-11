@@ -95,7 +95,7 @@ export default function SmartControlsSection({
               servoSpeedLevels[i]
             );
           }}
-          colors={{ active: "linear-gradient(135deg, #4f8ef7, #3ac0f8)" }}
+          colors={{ active: "linear-gradient(135deg, #ffbb55, #ff8855)" }}
         />
       </div>
 

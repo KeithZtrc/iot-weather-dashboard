@@ -108,7 +108,7 @@ export default function WeatherControlSection({
           Weather Override
         </p>
         <p className="text-xs text-gray-600/80 leading-relaxed mt-1">
-          Select weather conditions manually or use automatic detection.
+          Select weather animation display manually or use automatic detection.
         </p>
       </div>
 

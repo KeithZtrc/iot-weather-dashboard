@@ -15,6 +15,7 @@ export const INITIAL_STATE = {
   speed: 1,
   weather: "sunny",
   position: 0,
+  moveSpeed: 1,
   openKey: null,
   chartData: [{ time: "0:00", temp: 25, hum: 60, pres: 101.3 }],
 };
