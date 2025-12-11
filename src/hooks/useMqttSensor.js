@@ -29,6 +29,10 @@ export function useMqttSensor(
   setTemperature,
   setHumidity,
   setPressure,
+  setLuminosity,
+  setRainLevel,
+  setWindSpeed,
+  setWindDirection,
   setHeatIndex,
   setDewPoint,
   setAbsHumidity,
@@ -84,11 +88,25 @@ export function useMqttSensor(
       if (topic.endsWith("/data")) {
         setDeviceOnline(true);
 
-        const { temperature: temp, humidity: hum, pressure: pres } = parsed;
+        //const { temperature: temp, humidity: hum, pressure: pres } = parsed;
+
+        const {
+          temperature: temp,
+          humidity: hum,
+          pressure: pres,
+          luminosity: lux,
+          rainLevel: rain,
+          windSpeed: wind,
+          windDirection: dir,
+        } = parsed;
 
         if (temp != null) setTemperature(temp);
         if (hum != null) setHumidity(hum);
         if (pres != null) setPressure(pres);
+        if (lux != null) setLuminosity(lux);
+        if (rain != null) setRainLevel(rain);
+        if (wind != null) setWindSpeed(wind);
+        if (dir != null) setWindDirection(dir);
 
         // Derive secondary metrics
         const derived = computeDerived(temp, hum, pres);
@@ -132,6 +150,10 @@ export function useMqttSensor(
     setTemperature,
     setHumidity,
     setPressure,
+    setLuminosity,
+    setRainLevel,
+    setWindSpeed,
+    setWindDirection,
     setHeatIndex,
     setDewPoint,
     setAbsHumidity,

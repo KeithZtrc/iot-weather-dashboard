@@ -6,6 +6,7 @@ export const MQTT_TOPICS = {
   ledBrightness: "nes/finalsproject/g1weatherstation/led/brightness",
   ledSpeed: "nes/finalsproject/g1weatherstation/led/speed",
   ledWeather: "nes/finalsproject/g1weatherstation/led/weather",
+  servoPostion: "nes/finalsproject/g1weatherstation/servo/position",
 };
 
 export const MQTT_CONFIG = {

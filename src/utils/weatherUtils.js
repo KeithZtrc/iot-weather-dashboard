@@ -10,10 +10,10 @@ import {
    Color scale (used for progress, status bars, etc.)
 ------------------------------------------------------- */
 export function getStatusColor(percent) {
-  if (percent < 0.25) return "#3b82f6"; // blue
-  if (percent < 0.5) return "#10b981"; // green
-  if (percent < 0.75) return "#f59e0b"; // yellow
-  return "#ef4444"; // red
+  if (percent < 0.25) return "#3b82f6";
+  if (percent < 0.5) return "#10b981";
+  if (percent < 0.75) return "#f59e0b";
+  return "#ef4444";
 }
 
 /* -------------------------------------------------------
@@ -69,9 +69,31 @@ export function computeDerived(temp, hum, pres) {
 }
 
 /* -------------------------------------------------------
+   Function to convert compass abbreviations into full words
+------------------------------------------------------- */
+export function directionToWords(dir) {
+  if (!dir || typeof dir !== "string") return "";
+
+  const map = {
+    N: "North",
+    NE: "Northeast",
+    E: "East",
+    SE: "Southeast",
+    S: "South",
+    SW: "Southwest",
+    W: "West",
+    NW: "Northwest",
+  };
+
+  return map[dir.toUpperCase()] || dir;
+}
+
+/* -------------------------------------------------------
    Weather status (Lottie, background, effects)
 ------------------------------------------------------- */
-export function getWeatherStatus(temp, hum, pres) {
+export function getWeatherStatus(temp, hum, pres, lux, rain, wind) {
+  const isRaining = rain < 500;
+
   // Safety fallback
   if (!Number.isFinite(temp) || !Number.isFinite(hum)) {
     return {
@@ -82,7 +104,7 @@ export function getWeatherStatus(temp, hum, pres) {
   }
 
   // Stormy (low pressure and high humidity)
-  if (pres < 99.5 && hum > 80 && temp >= 15) {
+  if (pres < 99.5 && hum > 80 && temp >= 15 && wind > 15) {
     return {
       desc: "Stormy",
       lottie: stormyAnim,
@@ -91,7 +113,7 @@ export function getWeatherStatus(temp, hum, pres) {
   }
 
   // Rainy (very high humidity)
-  if (pres < 100.5 && hum > 85) {
+  if (isRaining && pres < 100.5 && hum > 85) {
     return {
       desc: "Rainy",
       lottie: rainyAnim,
@@ -109,7 +131,7 @@ export function getWeatherStatus(temp, hum, pres) {
   }
 
   // Heat wave
-  if (temp >= 32 && hum < 60) {
+  if (temp >= 32 && hum < 60 && lux > 50000) {
     return {
       desc: "Hot",
       lottie: sunnyAnim,

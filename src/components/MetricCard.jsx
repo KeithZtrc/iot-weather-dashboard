@@ -1,18 +1,6 @@
 import React, { useEffect } from "react";
 import { normalize, getStatusColor } from "../utils/weatherUtils.js";
 
-/* ---------------------------------------------------------------------
-   METRIC CARD COMPONENT
-   ----------------------------------------------------------------------
-   Purpose:
-   - Displays one metric (temp, humidity, pressure, heat index, etc.)
-   - Includes:
-       • Icon + label + formatted value
-       • Animated arc indicator showing value between min/max
-       • Hover/click popover with extended explanation
-   - Memoized to prevent unnecessary re-renders
----------------------------------------------------------------------- */
-
 const MetricCard = React.memo(function MetricCard({
   label,
   value,
@@ -27,19 +15,10 @@ const MetricCard = React.memo(function MetricCard({
 }) {
   const ref = React.useRef(null);
 
-  /* -------------------------------------------------------------------
-     DETECT TOUCH DEVICE
-     - Touch devices don't have hover interaction → use click-only popovers
-  -------------------------------------------------------------------- */
   const isTouch =
     typeof window !== "undefined" &&
     ("ontouchstart" in window || navigator.maxTouchPoints > 0);
 
-  /* -------------------------------------------------------------------
-     CLOSE POPOVER WHEN CLICKING OUTSIDE THE CARD
-     - Active only when the popover is open
-     - Improves UX for touch and desktop
-  -------------------------------------------------------------------- */
   useEffect(() => {
     function handleClick(e) {
       if (ref.current && !ref.current.contains(e.target)) {
@@ -50,19 +29,36 @@ const MetricCard = React.memo(function MetricCard({
     return () => document.removeEventListener("mousedown", handleClick);
   }, [setOpenKey]);
 
-  // Whether this card’s popover is open
   const isOpen = openKey === metricKey;
 
-  // Determines whether the popover is positioned above or below the card
-  const isBottomMetric = ["heat", "dew", "abs"].includes(metricKey);
+  const isBottomMetric = [
+    "lux",
+    "rain",
+    "wind",
+    "dir",
+    "heat",
+    "dew",
+    "abs",
+  ].includes(metricKey);
 
-  /* -------------------------------------------------------------------
-     ARC INDICATOR COMPUTATION
-     - normalize(value, min, max) → 0..1
-     - getStatusColor(percent) → color theme based on threshold
-  -------------------------------------------------------------------- */
   const arcPercent = normalize(value, min, max);
   const arcColor = getStatusColor(arcPercent);
+
+  const gradient = {
+    temp: "from-red-500 to-pink-400", // Warm reds/pinks for temperature
+    hum: "from-blue-400 to-indigo-600", // Cool blues for humidity
+    pres: "from-yellow-400 to-amber-500", // Sunny yellows for pressure
+    heat: "from-orange-500 to-red-600", // Hot gradient for heat index
+    dew: "from-teal-400 to-cyan-500", // Fresh/greenish-teal for dew point
+    wind: "from-purple-400 to-indigo-500", // Light purple for wind
+    rain: "from-sky-400 to-blue-500", // Sky blue for rain
+    lux: "from-amber-300 to-yellow-400", // Bright yellow for light
+    dir: "from-pink-400 to-fuchsia-500", // Vibrant pinks for direction
+    abs: "from-gray-400 to-gray-600", // Neutral gray for absolute values
+    default: "from-gray-500 to-gray-700", // Fallback
+  };
+
+  const bgGradient = gradient[metricKey] || gradient.default;
 
   return (
     <div
@@ -76,58 +72,38 @@ const MetricCard = React.memo(function MetricCard({
       onMouseLeave={() => !isTouch && setOpenKey(null)}
       onClick={() => isTouch && setOpenKey(isOpen ? null : metricKey)}
     >
-      {/* -----------------------------------------------------------------
-         ICON BOX — Color theme depends on metricKey
-         ----------------------------------------------------------------- */}
+      {/* ICON BOX */}
       <div
-        className={`
-          rounded-md p-3 bg-gradient-to-tr shadow
-          ${
-            metricKey === "temp"
-              ? "from-red-500 to-orange-300"
-              : metricKey === "hum"
-              ? "from-sky-400 to-blue-600"
-              : metricKey === "pres"
-              ? "from-yellow-300 to-yellow-500"
-              : metricKey === "heat"
-              ? "from-red-600 to-orange-500"
-              : metricKey === "dew"
-              ? "from-teal-400 to-emerald-500"
-              : "from-gray-500 to-gray-700"
-          }
-        `}
+        className={`rounded-md p-3 bg-gradient-to-tr shadow flex items-center justify-center ${bgGradient}`}
       >
-        <Icon className="w-8 h-8 text-white" />
+        {typeof Icon === "string" ? (
+          <span className="text-white text-2xl">{Icon}</span>
+        ) : (
+          <Icon className="w-8 h-8 text-white" />
+        )}
       </div>
 
-      {/* -----------------------------------------------------------------
-         LABEL + VALUE DISPLAY
-         ----------------------------------------------------------------- */}
+      {/* LABEL + VALUE */}
       <div className="flex-1">
         <div className="text-sm text-gray-600 font-medium">{label}</div>
-
         <div className="text-2xl font-bold text-gray-900">
           {value}
           {unit && unit}
         </div>
       </div>
 
-      {/* -----------------------------------------------------------------
-         POPOVER — Extended explanation of this metric
-         Appears above/below depending on metric grouping
-         ----------------------------------------------------------------- */}
+      {/* POPOVER */}
       {isOpen && (
         <div
           className={`
-            absolute w-56 z-20 bg-white/60 backdrop-blur-xl
-            border border-white/40 rounded-xl p-4
-            text-sm text-gray-800 shadow-[0_8px_30px_rgb(0_0_0/0.12)]
+            absolute w-56 z-20 bg-white/80 backdrop-blur-xl
+            border border-white/30 rounded-xl p-4
+            text-sm text-gray-800 shadow-lg
             animate-fadeInScale transition-all duration-200 ease-out
-            hover:bg-white/70 hover:shadow-[0_12px_35px_rgb(0_0_0/0.16)]
             ${
               isBottomMetric
-                ? "right-4 bottom-full mb-3" // Popover above card
-                : "right-4 top-full mt-3" // Popover below card
+                ? "right-4 bottom-full mb-3"
+                : "right-4 top-full mt-3"
             }
           `}
         >
@@ -135,28 +111,24 @@ const MetricCard = React.memo(function MetricCard({
         </div>
       )}
 
-      {/* -----------------------------------------------------------------
-         ARC INDICATOR — Circular progress-like value visualization
-         ----------------------------------------------------------------- */}
-      <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none opacity-40">
-        <svg width="52" height="52">
-          <circle
-            cx="26"
-            cy="26"
-            r="22"
-            strokeWidth="6"
-            stroke={arcColor}
-            strokeDasharray={`${arcPercent * 138} 138`}
-            strokeLinecap="round"
-            fill="none"
-            transform="rotate(-90 26 26)"
-            style={{
-              transition:
-                "stroke-dasharray 0.6s ease-out, stroke 0.3s ease-out",
-            }}
-          />
-        </svg>
-      </div>
+      {/* ARC INDICATOR */}
+      {metricKey !== "dir" && (
+        <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none opacity-40">
+          <svg width="52" height="52">
+            <circle
+              cx="26"
+              cy="26"
+              r="22"
+              strokeWidth="6"
+              stroke={arcColor}
+              strokeDasharray={`${arcPercent * 138} 138`}
+              strokeLinecap="round"
+              fill="none"
+              transform="rotate(-90 26 26)"
+            />
+          </svg>
+        </div>
+      )}
     </div>
   );
 });

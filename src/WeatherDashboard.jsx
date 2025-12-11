@@ -57,7 +57,12 @@ export default function WeatherDashboard() {
   const [temperature, setTemperature] = useState(INITIAL_STATE.temperature);
   const [humidity, setHumidity] = useState(INITIAL_STATE.humidity);
   const [pressure, setPressure] = useState(INITIAL_STATE.pressure);
-
+  const [luminosity, setLuminosity] = useState(INITIAL_STATE.luminosity);
+  const [rainLevel, setRainLevel] = useState(INITIAL_STATE.rainLevel);
+  const [windSpeed, setWindSpeed] = useState(INITIAL_STATE.windSpeed);
+  const [windDirection, setWindDirection] = useState(
+    INITIAL_STATE.windDirection
+  );
   /* -----------------------------------------------------------
      DERIVED METRICS (calculated automatically)
      -----------------------------------------------------------
@@ -73,6 +78,9 @@ export default function WeatherDashboard() {
   const [brightness, setBrightness] = useState(INITIAL_STATE.brightness);
   const [speed, setSpeed] = useState(INITIAL_STATE.speed);
   const [currentWeather, setCurrentWeather] = useState(INITIAL_STATE.weather);
+
+  const [position, setPosition] = useState(INITIAL_STATE.position);
+  const [moveSpeed, setMoveSpeed] = useState(INITIAL_STATE.moveSpeed);
 
   const [openKey, setOpenKey] = useState(INITIAL_STATE.openKey);
 
@@ -140,6 +148,10 @@ export default function WeatherDashboard() {
     setTemperature,
     setHumidity,
     setPressure,
+    setLuminosity,
+    setRainLevel,
+    setWindSpeed,
+    setWindDirection,
     setHeatIndex,
     setDewPoint,
     setAbsHumidity,
@@ -151,8 +163,23 @@ export default function WeatherDashboard() {
      -----------------------------------------------------------
      Prepares human-readable summaries for UI panels
   ----------------------------------------------------------- */
-  const weather = getWeatherStatus(temperature, humidity, pressure);
-  const metricsPrimary = getMetricsPrimary(temperature, humidity, pressure);
+  const weather = getWeatherStatus(
+    temperature,
+    humidity,
+    pressure,
+    luminosity,
+    rainLevel,
+    windSpeed
+  );
+  const metricsPrimary = getMetricsPrimary(
+    temperature,
+    humidity,
+    pressure,
+    luminosity,
+    rainLevel,
+    windSpeed,
+    windDirection
+  );
   const metricsDerived = getMetricsDerived(heatIndex, dewPoint, absHumidity);
 
   /* -----------------------------------------------------------
@@ -212,6 +239,10 @@ export default function WeatherDashboard() {
           setBrightness={setBrightness}
           speed={speed}
           setSpeed={setSpeed}
+          servoValue={position}
+          setServoValue={setPosition}
+          servoSpeed={moveSpeed}
+          setServoSpeed={setMoveSpeed}
           currentWeather={currentWeather}
           setCurrentWeather={setCurrentWeather}
           publish={publish}

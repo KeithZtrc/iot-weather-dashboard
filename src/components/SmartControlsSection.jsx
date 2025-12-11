@@ -1,58 +1,27 @@
 import { motion } from "framer-motion";
 import SectionHeader from "./SectionHeader.jsx";
 import ThreeLevelPillSlider from "./ThreeLevelPillSlider.jsx";
+import TwoLevelPillSlider from "./TwoLevelPillSlider.jsx";
 import WeatherControlSection from "./WeatherControlSection.jsx";
 import { MQTT_TOPICS } from "../constants/mqttConfig.js";
-
-/* ---------------------------------------------------------------------
-   SMART CONTROLS — INTERNAL WRAPPER (Placeholder)
-   ----------------------------------------------------------------------
-   Purpose:
-   - Reserved for future “auto intelligence” control logic
-   - Currently not used but structurally preserved for expansion
----------------------------------------------------------------------- */
-
-export function SmartControls({
-  brightness,
-  speed,
-  onBrightnessChange,
-  onSpeedChange,
-  onPublish,
-  brightnessLevels,
-  speedLevels,
-}) {
-  return (
-    <div className="smart-controls">
-      <h3>Smart Controls</h3>
-      {/* Future smart logic will be implemented here */}
-    </div>
-  );
-}
-
-/* ---------------------------------------------------------------------
-   SMART CONTROLS SECTION
-   ----------------------------------------------------------------------
-   Purpose:
-   - Provides UI to adjust smart-device parameters:
-       • LED brightness (3-step)
-       • Animation speed (3-step)
-       • Weather mode (Sunny, Rainy, Foggy, etc.)
-   - Publishes changes via MQTT to the ESP32
-   - Wrapped in a glassy, animated section container
----------------------------------------------------------------------- */
 
 export default function SmartControlsSection({
   brightness,
   setBrightness,
   speed,
   setSpeed,
+  servoValue,
+  setServoValue,
+  servoSpeed,
+  setServoSpeed,
   currentWeather,
   setCurrentWeather,
   publish,
 }) {
-  // Predefined discrete levels used by sliders
+  // Predefined discrete levels
   const brightnessLevels = [50, 128, 255];
-  const speedLevels = [100, 50, 20];
+  const speedLevels = [100, 50, 20]; // LED animation speed
+  const servoSpeedLevels = [20, 50, 80]; // Servo speed mapping (low → high)
 
   return (
     <motion.div
@@ -66,21 +35,14 @@ export default function SmartControlsSection({
         border border-white/30 shadow-lg overflow-hidden
       "
     >
-      {/* -----------------------------------------------------------------
-         SECTION HEADER — Title, subtitle, and icon
-         ----------------------------------------------------------------- */}
+      {/* SECTION HEADER */}
       <SectionHeader
         title="Smart Controls"
         subtitle="Interact with connected systems and adjust environmental responses"
         icon={<span className="text-6xl cursor-pointer">🎛️</span>}
       />
 
-      {/* -----------------------------------------------------------------
-         SLIDERS — Brightness + Animation Speed
-         -----------------------------------------------------------------
-         • Both use a three-level pill-style selector
-         • Immediately publish MQTT packets on user interaction
-         ----------------------------------------------------------------- */}
+      {/* SLIDERS GRID */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
         {/* Brightness control */}
         <ThreeLevelPillSlider
@@ -105,15 +67,39 @@ export default function SmartControlsSection({
           }}
           colors={{ active: "linear-gradient(135deg, #4f8ef7, #3ac0f8)" }}
         />
+
+        {/* Servo Position */}
+        <TwoLevelPillSlider
+          label="Servo Position"
+          description="Toggle between 0° and 90° positions"
+          value={servoValue}
+          onChange={(i) => {
+            setServoValue(i);
+            publish(
+              "nes/finalsproject/g1weatherstation/servo/position",
+              i === 0 ? 0 : 90
+            );
+          }}
+          colors={{ active: "linear-gradient(135deg, #6dd5ed, #2193b0)" }}
+        />
+
+        {/* Servo Speed */}
+        <ThreeLevelPillSlider
+          label="Servo Speed"
+          description="Adjusts the speed of the servo movement"
+          value={servoSpeed}
+          onChange={(i) => {
+            setServoSpeed(i);
+            publish(
+              "nes/finalsproject/g1weatherstation/servo/movement",
+              servoSpeedLevels[i]
+            );
+          }}
+          colors={{ active: "linear-gradient(135deg, #4f8ef7, #3ac0f8)" }}
+        />
       </div>
 
-      {/* -----------------------------------------------------------------
-         WEATHER MODE CONTROL — Sets simulated conditions on ESP32
-         -----------------------------------------------------------------
-         • Sunny, Rainy, Stormy, Clear, Mist, etc.
-         • Not slider-based; uses pill buttons / icons
-         • Also publishes via MQTT
-         ----------------------------------------------------------------- */}
+      {/* WEATHER CONTROL */}
       <WeatherControlSection
         currentWeather={currentWeather}
         onWeatherChange={setCurrentWeather}
