@@ -112,8 +112,8 @@ export function getMetricsPrimary(
     createMetric({
       key: "rain",
       label: "Rain Level",
-      value: (rainLevel / 1023) * 100,
-      rawValue: (rainLevel / 1023) * 100,
+      value: ((1023 - rainLevel) / 1023) * 100,
+      rawValue: ((1023 - rainLevel) / 1023) * 100,
       decimals: 0,
       unit: "%",
       Icon: RainIcon,
@@ -130,7 +130,7 @@ export function getMetricsPrimary(
       unit: " km/h",
       Icon: WindIcon,
       min: 0,
-      max: 20,
+      max: 60,
       description: metricInfo.wind,
     }),
 
