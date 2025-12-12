@@ -102,9 +102,9 @@ export function getWeatherStatus(temp, hum, pres, lux, rain, wind) {
       effect: "clouds",
     };
   }
-
-  // Stormy (low pressure and high humidity)
-  if (pres < 99.5 && hum > 80 && temp >= 15 && wind > 15) {
+  // Stormy (dominant)
+  if (pres < 101.0 && hum > 80 && temp < 20) {
+    // no strict rain required
     return {
       desc: "Stormy",
       lottie: stormyAnim,
@@ -112,8 +112,8 @@ export function getWeatherStatus(temp, hum, pres, lux, rain, wind) {
     };
   }
 
-  // Rainy (very high humidity)
-  if (isRaining && pres < 100.5 && hum > 85) {
+  // Rainy (lighter rain)
+  if (isRaining && hum > 70) {
     return {
       desc: "Rainy",
       lottie: rainyAnim,
@@ -131,7 +131,7 @@ export function getWeatherStatus(temp, hum, pres, lux, rain, wind) {
   }
 
   // Heat wave
-  if (temp >= 32 && hum < 60 && lux > 50000) {
+  if (temp >= 32 && hum < 60) {
     return {
       desc: "Hot",
       lottie: sunnyAnim,
