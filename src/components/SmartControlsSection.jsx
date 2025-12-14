@@ -75,10 +75,7 @@ export default function SmartControlsSection({
           value={servoValue}
           onChange={(i) => {
             setServoValue(i);
-            publish(
-              "nes/finalsproject/g1weatherstation/servo/position",
-              i === 0 ? 0 : 90
-            );
+            publish(MQTT_TOPICS.servoPostion, i === 0 ? 0 : 90);
           }}
           colors={{ active: "linear-gradient(135deg, #6dd5ed, #2193b0)" }}
         />
@@ -90,10 +87,7 @@ export default function SmartControlsSection({
           value={servoSpeed}
           onChange={(i) => {
             setServoSpeed(i);
-            publish(
-              "nes/finalsproject/g1weatherstation/servo/movement",
-              servoSpeedLevels[i]
-            );
+            publish(MQTT_TOPICS.servoSpeed, servoSpeedLevels[i]);
           }}
           colors={{ active: "linear-gradient(135deg, #ffbb55, #ff8855)" }}
         />
